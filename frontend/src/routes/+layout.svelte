@@ -10,7 +10,7 @@
       background-image: url('/galaxy background.jpg'); /* Path to your image */
       background-size: cover; /* Ensures the image covers the entire background */
       background-position: center; /* Centers the image */
-      background-repeat: no-repeat; /* Prevents the image from repeating */
+      background-repeat: repeat; /* Prevents the image from repeating */
       color: #F1F3F5;
       text-align: center;
     }
