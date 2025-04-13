@@ -7,9 +7,10 @@
      // Fetch planets from Flask API
 
     onMount(async () => {
-        const res = await fetch('http://127.0.0.1:5000/query=GET extract'); // Adjust if needed
-        planets = await res.json();
-        console.log(planets);
+        const res = await fetch('http://localhost:5000/test_planets'); // Adjust the URL if needed
+        const data = await res.json();
+        console.log(data)
+        planets = data.planets; // Assign the fetched planets to the variable
 	});
 
     function filteredPlanets() {
@@ -39,16 +40,13 @@
         transform: scale(1.03);
     }
 
-    img {
-        max-width: 100%;
-        border-radius: 0.5rem;
-    }
-
     select {
         margin: 1rem 0;
         padding: 0.5rem;
         border-radius: 0.5rem;
     }
+
+
 </style>
 
 
@@ -58,20 +56,21 @@
 <select bind:value={filter}>
     <option value="all">All</option>
     <option value="habitable">Habitable</option>
+    <option value="uninhabitable">Uninhabitable</option>
+    <option value="terraforming">Terraforming</option>
 </select>
 
+<!-- Grid to display planets -->
 <div class="planet-grid">
-    {#each filteredPlanets() as planet}
+    {#each planets as planet}
         <div class="planet-card">
-            <h2>{planet.name}</h2>
-            <img src={planet.image_url} alt={planet.name} />
-            <p>{planet.description}</p>
-            <p><strong>Type:</strong> {planet.type}</p>
+            <h2>{planet.pl_name}</h2>
             <p><strong>Distance:</strong> {planet.distance_light_years} light-years</p>
-            <p><strong>Gravity:</strong> {planet.gravity.toFixed(2)} m/s²</p>
-            <p><strong>Travel Time:</strong> {planet.travel_time.toFixed(2)} years</p>
-            <p><strong>Time Gained:</strong> {planet.time_gained.toFixed(2)} years</p>
-            <p><strong>Price:</strong> ${planet.price_per_night}</p>
+            <p><strong>Orbit Period:</strong> {planet.pl_orblper} days</p>
+            <p><strong>Gravity:</strong> {planet.gravity} m/s²</p>
+            <p><strong>Radius:</strong> {planet.pl_rade} Earth radii</p>
+            <p><strong>Category:</strong> {planet.category}</p>
         </div>
     {/each}
 </div>
+
