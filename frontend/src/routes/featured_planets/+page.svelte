@@ -15,7 +15,7 @@
 
     function filteredPlanets() {
         if (filter === 'all') return planets;
-        return planets.filter(p => p.type === filter);
+        return planets.filter(p => p.category === filter); // Filter by category
     }
 </script>
 
@@ -53,6 +53,7 @@
 
 <h1>Time to Explore Your Planet Options!</h1>
 
+<!-- Dropdown to filter planets -->
 <select bind:value={filter}>
     <option value="all">All</option>
     <option value="habitable">Habitable</option>
@@ -62,7 +63,7 @@
 
 <!-- Grid to display planets -->
 <div class="planet-grid">
-    {#each planets as planet}
+    {#each filteredPlanets() as planet}
         <div class="planet-card">
             <h2>{planet.pl_name}</h2>
             <p><strong>Distance:</strong> {planet.distance_light_years} light-years</p>
