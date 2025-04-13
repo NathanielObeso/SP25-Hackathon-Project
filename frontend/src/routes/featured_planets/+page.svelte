@@ -1,14 +1,15 @@
 <script>
+    import { onMount } from 'svelte';
+
     let planets = [];
     let filter = 'all';
 
      // Fetch planets from Flask API
-     async function loadPlanets() {
+
+    onMount(async () => {
         const res = await fetch('http://localhost:5000/api/planets'); // Adjust if needed
         planets = await res.json();
-    }
-
-    loadPlanets();
+	});
 
     function filteredPlanets() {
         if (filter === 'all') return planets;
