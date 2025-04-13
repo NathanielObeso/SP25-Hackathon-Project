@@ -7,7 +7,10 @@
     :global(body) {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #0C2A4D, #4A148C);
+      background-image: url('/galaxy background.jpg'); /* Path to your image */
+      background-size: cover; /* Ensures the image covers the entire background */
+      background-position: center; /* Centers the image */
+      background-repeat: no-repeat; /* Prevents the image from repeating */
       color: #F1F3F5;
       text-align: center;
     }
