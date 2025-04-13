@@ -1,4 +1,4 @@
-Run both simultaneously
+You must run both simultaneously using two terminal windows/tabs.
 
 backend:
 
