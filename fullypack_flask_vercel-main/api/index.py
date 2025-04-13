@@ -18,9 +18,17 @@ def get_exoplanet_data():
         return response.json()
     else:
         return {"error": "Failed to fetch data from NASA"}
-
-#terraform_query = "SELECT TOP 30 pl_name, sy_dist*3.26156 AS distance_light_years, pl_rade, pl_massj, pl_eqt FROM ps WHERE pl_rade > 1 AND pl_massj < 10 AND pl_eqt > 100 AND pl_eqt < 400 ORDER BY sy_dist ASC;"
-#terraforming_planets = get_exoplanet_data(terraform_query)
+    
+@app.route('/api/terraforming', methods=['GET'])
+def get_terraform_data():
+    query = "SELECT TOP 30 pl_name, sy_dist*3.26156 AS distance_light_years, pl_rade, pl_massj, pl_eqt, (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity FROM ps WHERE pl_rade > 1 AND pl_massj < 10 AND pl_eqt > 100 AND pl_eqt < 400 AND pl_massj IS NOT NULL AND pl_rade IS NOT NULL ORDER BY sy_dist ASC;"  # Get the query from the request
+    url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={query}&format=json"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return {"error": "Failed to fetch data from NASA"}
+    
 # Fetch and store the data in memory
 #habitable_query = "SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade, pl_orbper FROM ps WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 ORDER BY sy_dist;"
 #habitable_planets = get_exoplanet_data(habitable_query)

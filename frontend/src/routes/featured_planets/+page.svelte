@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
 
     let planets = [];
+    let terraform_planets = [];
     let filter = '';
 
      // Fetch planets from Flask API
@@ -9,10 +10,13 @@
     onMount(async () => {
         const res = await fetch('http://127.0.0.1:5000/extract'); // Adjust if needed
         planets = await res.json();
+        const res2 = await fetch('http://127.0.0.1:5000/api/terraforming');
+        terraform_planets = await res2.json()
 	});
 
     function filteredPlanets() {
         if (filter === 'all') return planets;
+        else if (filter === 'uninhabitable') return terraform_planets;
         return planets.filter(p => p.category === filter);
     }
 </script>
@@ -58,6 +62,7 @@
     <option value=""></option>
     <option value="all">All</option>
     <option value="habitable">Habitable</option>
+    <option value="uninhabitable">Uninhabitable</option>
 </select>
 
 <div class="planet-grid">
