@@ -64,7 +64,7 @@
 
 <!-- Grid to display planets -->
 <div class="planet-grid">
-    {#each planets as planet}
+    {#each filteredPlanets() as planet}
         <div class="planet-card">
             <h2>{planet.pl_name}</h2>
             <p><strong>Distance:</strong> {planet.distance_light_years} light-years</p>
