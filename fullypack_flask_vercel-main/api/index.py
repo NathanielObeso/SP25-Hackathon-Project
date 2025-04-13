@@ -2,14 +2,16 @@ from flask import Flask, redirect, url_for, render_template, request
 import requests
 import json
 import sqlite3
+from flask_cors import CORS
 
 # Our Flask app object
 app = Flask(__name__, template_folder='../templates',
             static_folder='../static')
+CORS(app)
 
 @app.route('/extract', methods=['GET'])
 def get_exoplanet_data():
-    query = request.args.get('query')  # Get the query from the request
+    query = "SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade, pl_orbper FROM ps WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL AND pl_massj IS NOT NULL AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 ORDER BY sy_dist;"  # Get the query from the request
     url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={query}&format=json"
     response = requests.get(url)
     if response.status_code == 200:
@@ -17,16 +19,14 @@ def get_exoplanet_data():
     else:
         return {"error": "Failed to fetch data from NASA"}
 
-habitable_query = "SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade, pl_orbper FROM ps WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL AND pl_massj IS NOT NULL AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 ORDER BY sy_dist ASC;"
-habitable_planets = get_exoplanet_data(habitable_query)
-
-for planet in habitable_planets:
-    print(f'{planet['pl_name']}: {planet['distance_light_years']} light years, Orbital period of {planet['pl_orblper']} days, gravity of {planet['gravity']}, radius of {planet['pl_rade']} Earth radii, {planet['pl_orbper']} days to orbit')
-
-terraform_query = "SELECT TOP 30 pl_name, sy_dist*3.26156 AS distance_light_years, pl_rade, pl_massj, pl_eqt FROM ps WHERE pl_rade > 1 AND pl_massj < 10 AND pl_eqt > 100 AND pl_eqt < 400 ORDER BY sy_dist ASC;"
-terraforming_planets = get_exoplanet_data(terraform_query)
+#terraform_query = "SELECT TOP 30 pl_name, sy_dist*3.26156 AS distance_light_years, pl_rade, pl_massj, pl_eqt FROM ps WHERE pl_rade > 1 AND pl_massj < 10 AND pl_eqt > 100 AND pl_eqt < 400 ORDER BY sy_dist ASC;"
+#terraforming_planets = get_exoplanet_data(terraform_query)
 # Fetch and store the data in memory
-habitable_query = "SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade FROM ps WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 ORDER BY sy_dist;"
+#habitable_query = "SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade, pl_orbper FROM ps WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 ORDER BY sy_dist;"
+#habitable_planets = get_exoplanet_data(habitable_query)
+
+#for planet in habitable_planets:
+    #print(f'{planet['pl_name']}: {planet['distance_light_years']} light years, Orbital period of {planet['pl_orblper']} days, gravity of {planet['gravity']}, radius of {planet['pl_rade']} Earth radii, {planet['pl_orbper']} days to orbit')
 
 # Create a database connection
 conn = sqlite3.connect('planets.db')
@@ -118,8 +118,6 @@ def catch_all(path):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-import requests
 
 query = """
     SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
