@@ -8,48 +8,36 @@
       rel="stylesheet"
       href="https://unpkg.com/@picocss/pico@latest/css/pico.classless.min.css"
     />
-    <title>Flask-Vercel Template</title>
+    <title>StarBnB - Habitable Planets</title>
   </head>
   <body>
     <main class="container">
-      <nav>
-        <ul>
-          <li>
-            <a href="https://fullyhacks.acmcsuf.com/" target="_blank"
-              ><strong>FullyHacks</strong></a
-            >
-          </li>
-          <li>
-            <a
-              href="https://github.com/acmcsufoss/hackpack_flask_vercel"
-              target="_blank"
-              >Source Code</a
-            >
-          </li>
-        </ul>
-      </nav>
+      <h1>Habitable Planets</h1>
+      <p>Explore planets that could potentially support life!</p>
 
-      <h1>A premade Flask template!</h1>
-
-      <p>
-        Are you looking to build a web application using Flask but don't know
-        where to start? Look no further! Our premade Flask template provides you
-        with a ready-to-use foundation to kickstart your web development
-        journey.
-      </p>
-      <p>
-        Our template includes all the necessary files and dependencies you need
-        to get started, so you don't have to worry about configuring your Flask
-        environment from scratch. Our template comes with a clean and modern
-        design using
-        <a href="https://picocss.com" target="_blank">pico.css</a> that you can
-        easily customize to fit your brand or project requirements. The template
-        is fully responsive, ensuring that your web application looks great on
-        any device, whether it's a desktop, laptop, or mobile device. Built
-        specifically with Vercel in mind, deploying with this template is as
-        simple as clicking the provided link in our README.md!
-      </p>
-      <p>Good luck to all FullyHacks participants!</p>
+      <!-- Table to display planets -->
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Distance (Light Years)</th>
+            <th>Orbital Period (Days)</th>
+            <th>Gravity (m/s²)</th>
+            <th>Radius (Earth Radii)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for planet in planets %}
+          <tr>
+            <td>{{ planet.pl_name }}</td>
+            <td>{{ planet.distance_light_years }}</td>
+            <td>{{ planet.pl_orblper }}</td>
+            <td>{{ planet.gravity }}</td>
+            <td>{{ planet.pl_rade }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
       <nav>
         <details role="list">
