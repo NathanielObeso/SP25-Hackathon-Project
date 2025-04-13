@@ -28,7 +28,7 @@
     }
 
     .planet-card {
-        background-color: #111;
+        background-color: #0C2A4D;
         color: white;
         border-radius: 1rem;
         padding: 1rem;
