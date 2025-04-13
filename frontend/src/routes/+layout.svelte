@@ -48,7 +48,7 @@
   </style>
   
   <header>
-    <h1>🚀 StarBNB</h1>
+    <h1>🚀 StarBNB 🚀</h1>
     <nav>
       <a href="/">Home</a>
       <a href="/featured_planets">Featured Planets</a>
