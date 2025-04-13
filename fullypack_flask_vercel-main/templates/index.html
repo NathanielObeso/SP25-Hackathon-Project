@@ -8,14 +8,15 @@
       rel="stylesheet"
       href="https://unpkg.com/@picocss/pico@latest/css/pico.classless.min.css"
     />
-    <title>StarBnB - Habitable Planets</title>
+    <title>StarBnB - Planets</title>
   </head>
   <body>
     <main class="container">
-      <h1>Habitable Planets</h1>
-      <p>Explore planets that could potentially support life!</p>
+      <h1>StarBnB Planets</h1>
+      <p>Explore planets that could potentially support life or be terraformed!</p>
 
-      <!-- Table to display planets -->
+      <!-- Table for Habitable Planets -->
+      <h2>Habitable Planets</h2>
       <table>
         <thead>
           <tr>
@@ -27,7 +28,32 @@
           </tr>
         </thead>
         <tbody>
-          {% for planet in planets %}
+          {% for planet in habitable_planets %}
+          <tr>
+            <td>{{ planet.pl_name }}</td>
+            <td>{{ planet.distance_light_years }}</td>
+            <td>{{ planet.pl_orblper }}</td>
+            <td>{{ planet.gravity }}</td>
+            <td>{{ planet.pl_rade }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Table for Terraforming Planets -->
+      <h2>Terraforming Planets</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Distance (Light Years)</th>
+            <th>Orbital Period (Days)</th>
+            <th>Gravity (m/s²)</th>
+            <th>Radius (Earth Radii)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for planet in terraforming_planets %}
           <tr>
             <td>{{ planet.pl_name }}</td>
             <td>{{ planet.distance_light_years }}</td>
@@ -53,3 +79,38 @@
   </body>
   <script src="/static/minimal-theme-switcher.js"></script>
 </html>
+
+@app.route('/')
+@app.route('/index')
+def index():
+    # Query for habitable planets
+    habitable_query = """
+        SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
+        (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
+        FROM ps 
+        WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL 
+        AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 
+        ORDER BY sy_dist;
+    """
+    # Query for terraforming planets
+    terraforming_query = """
+        SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
+        (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
+        FROM ps 
+        WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL 
+        AND pl_orblper > 365.25 * 1.2 
+        ORDER BY sy_dist;
+    """
+
+    # Fetch data from NASA's API
+    habitable_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={habitable_query}&format=json"
+    terraforming_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={terraforming_query}&format=json"
+
+    habitable_response = requests.get(habitable_url)
+    terraforming_response = requests.get(terraforming_url)
+
+    habitable_planets = habitable_response.json() if habitable_response.status_code == 200 else []
+    terraforming_planets = terraforming_response.json() if terraforming_response.status_code == 200 else []
+
+    # Pass both lists to the frontend
+    return render_template('index.html', habitable_planets=habitable_planets, terraforming_planets=terraforming_planets)

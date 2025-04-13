@@ -34,41 +34,44 @@ c.execute('''CREATE TABLE IF NOT EXISTS habitable_planets (
 )''')
 conn.commit()
 
-def store_planets_in_db(planets):
+c.execute('''CREATE TABLE IF NOT EXISTS planets (
+    pl_name TEXT,
+    distance_light_years REAL,
+    pl_orblper REAL,
+    gravity REAL,
+    pl_rade REAL,
+    category TEXT
+)''')
+conn.commit()
+
+def store_planets_in_db(planets, category):
     for planet in planets:
-        c.execute('INSERT INTO habitable_planets VALUES (?, ?, ?, ?, ?)', (
+        c.execute('INSERT INTO planets VALUES (?, ?, ?, ?, ?, ?)', (
             planet['pl_name'],
             planet['distance_light_years'],
             planet['pl_orblper'],
             planet['gravity'],
-            planet['pl_rade']
+            planet['pl_rade'],
+            category
         ))
     conn.commit()
 
 # Fetch and store the data
 habitable_planets = get_exoplanet_data(habitable_query)
 if habitable_planets:
-    store_planets_in_db(habitable_planets)
+    store_planets_in_db(habitable_planets, 'habitable')
+store_planets_in_db(terraforming_planets, 'terraforming')
 
 @app.route('/')
 @app.route('/index')
 def index():
-    # Query to fetch habitable planets
-    habitable_query = """
-        SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
-        (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
-        FROM ps 
-        WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL 
-        AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 
-        ORDER BY sy_dist;
-    """
-    # Fetch data from NASA's API
-    url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={habitable_query}&format=json"
-    response = requests.get(url)
-    planets = response.json() if response.status_code == 200 else []
+    c.execute("SELECT * FROM planets WHERE category = 'habitable'")
+    habitable_planets = c.fetchall()
 
-    # Pass the data to the frontend
-    return render_template('index.html', planets=planets)
+    c.execute("SELECT * FROM planets WHERE category = 'terraforming'")
+    terraforming_planets = c.fetchall()
+
+    return render_template('index.html', habitable_planets=habitable_planets, terraforming_planets=terraforming_planets)
 
 @app.route('/planets', methods=['GET'])
 def get_planets():
