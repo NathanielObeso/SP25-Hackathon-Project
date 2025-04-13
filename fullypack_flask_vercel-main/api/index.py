@@ -8,8 +8,6 @@ from flask_cors import CORS
 app = Flask(__name__, template_folder='../templates',
             static_folder='../static')
 CORS(app)
-<<<<<<< HEAD
-=======
 #
 test_planets = [
     {
@@ -92,7 +90,7 @@ def get_test_planets():
 #
 
 import requests
->>>>>>> 86aaed8cea6c11bb35f74d7e2151830f8e7951a5
+
 
 @app.route('/extract', methods=['GET'])
 def get_exoplanet_data():
