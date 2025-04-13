@@ -56,21 +56,39 @@ def store_planets_in_db(planets, category):
         ))
     conn.commit()
 
-# Fetch and store the data
-habitable_planets = get_exoplanet_data(habitable_query)
-if habitable_planets:
-    store_planets_in_db(habitable_planets, 'habitable')
-store_planets_in_db(terraforming_planets, 'terraforming')
-
 @app.route('/')
 @app.route('/index')
 def index():
-    c.execute("SELECT * FROM planets WHERE category = 'habitable'")
-    habitable_planets = c.fetchall()
+    # Query for habitable planets
+    habitable_query = """
+        SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
+        (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
+        FROM ps 
+        WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL 
+        AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 
+        ORDER BY sy_dist;
+    """
+    # Query for terraforming planets
+    terraforming_query = """
+        SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
+        (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
+        FROM ps 
+        WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL 
+        AND pl_orblper > 365.25 * 1.2 
+        ORDER BY sy_dist;
+    """
 
-    c.execute("SELECT * FROM planets WHERE category = 'terraforming'")
-    terraforming_planets = c.fetchall()
+    # Fetch data from NASA's API
+    habitable_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={habitable_query}&format=json"
+    terraforming_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={terraforming_query}&format=json"
 
+    habitable_response = requests.get(habitable_url)
+    terraforming_response = requests.get(terraforming_url)
+
+    habitable_planets = habitable_response.json() if habitable_response.status_code == 200 else []
+    terraforming_planets = terraforming_response.json() if terraforming_response.status_code == 200 else []
+
+    # Pass both lists to the frontend
     return render_template('index.html', habitable_planets=habitable_planets, terraforming_planets=terraforming_planets)
 
 @app.route('/planets', methods=['GET'])
@@ -94,4 +112,4 @@ def catch_all(path):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

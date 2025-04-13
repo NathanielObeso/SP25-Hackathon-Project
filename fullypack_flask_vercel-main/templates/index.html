@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
@@ -64,20 +63,8 @@
           {% endfor %}
         </tbody>
       </table>
-
-      <nav>
-        <details role="list">
-          <summary aria-haspopup="listbox" role="button">Theme</summary>
-          <ul role="listbox">
-            <li><a href="#" data-theme-switcher="auto">Auto</a></li>
-            <li><a href="#" data-theme-switcher="light">Light</a></li>
-            <li><a href="#" data-theme-switcher="dark">Dark</a></li>
-          </ul>
-        </details>
-      </nav>
     </main>
   </body>
-  <script src="/static/minimal-theme-switcher.js"></script>
 </html>
 
 @app.route('/')
