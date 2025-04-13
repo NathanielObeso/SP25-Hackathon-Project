@@ -5,40 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>StarBnB - Your Galactic Getaway</title>
   <style>
+    /* Galactic Getaway Color Palette */
+    :root {
+        --dark-space: #0C2A4D; /* Deep space blue */
+        --nebula-purple: #4A148C; /* Nebula purple */
+        --starlight-yellow: #FFDB58; /* Starlight yellow */
+        --planet-gray: #F1F3F5; /* Planet surface gray */
+        --button-blue: #007bff; /* Button blue */
+        --button-hover: #0056b3; /* Button hover blue */
+    }
+
     body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(to bottom, #0C2A4D, #4A148C);
-      color: #F1F3F5;
-      text-align: center;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: linear-gradient(to bottom, var(--dark-space), var(--nebula-purple));
+        color: var(--planet-gray);
+        text-align: center;
     }
 
     header {
-      padding: 50px;
+        padding: 50px;
     }
 
     h1 {
-      font-size: 3rem;
-      color: #FFDB58;
+        font-size: 3rem;
+        color: var(--starlight-yellow);
     }
 
     h2 {
-      font-size: 1.5rem;
-      margin-top: 10px;
+        font-size: 1.5rem;
+        margin-top: 10px;
     }
 
     a {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: var(--button-blue);
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1rem;
     }
 
     a:hover {
-      background-color: #0056b3;
+        background-color: var(--button-hover);
+    }
+
+    .material-symbols-outlined {
+        font-size: 1.2rem;
     }
 
     .destinations {
@@ -68,6 +86,9 @@
       margin-bottom: 0.5rem;
     }
   </style>
+
+  <!-- Include Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 <body>
   <script>
@@ -82,7 +103,10 @@
     <header>
       <h1>{name}</h1>
       <h2>{tagline}</h2>
-      <a href="/featured">{buttonText}</a>
+      <a href="/featured">
+        <span class="material-symbols-outlined">travel_explore</span>
+        {buttonText}
+      </a>
     </header>
   </main>
 
