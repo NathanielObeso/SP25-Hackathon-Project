@@ -2,20 +2,22 @@
     import { onMount } from 'svelte';
 
     let planets = [];
-    let filter = 'all';
+    let terraform_planets = [];
+    let filter = '';
 
      // Fetch planets from Flask API
 
     onMount(async () => {
-        const res = await fetch('http://localhost:5173/test_planets'); // Adjust the URL if needed
-        const data = await res.json();
-        console.log(data)
-        planets = data.planets; // Assign the fetched planets to the variable
+        const res = await fetch('http://127.0.0.1:5000/extract'); // Adjust if needed
+        planets = await res.json();
+        const res2 = await fetch('http://127.0.0.1:5000/api/terraforming');
+        terraform_planets = await res2.json()
 	});
 
     function filteredPlanets() {
         if (filter === 'all') return planets;
-        return planets.filter(p => p.type === filter);
+        else if (filter === 'uninhabitable') return terraform_planets;
+        return planets.filter(p => p.category === filter);
     }
 </script>
 
@@ -54,10 +56,10 @@
 <h1>Time to Explore Your Planet Options!</h1>
 
 <select bind:value={filter}>
+    <option value=""></option>
     <option value="all">All</option>
     <option value="habitable">Habitable</option>
     <option value="uninhabitable">Uninhabitable</option>
-    <option value="terraforming">Terraforming</option>
 </select>
 
 <!-- Grid to display planets -->
