@@ -1,11 +1,94 @@
 from flask import Flask, redirect, url_for, render_template, request
-import requests
+from flask_cors import CORS
 import json
 import sqlite3
 
 # Our Flask app object
 app = Flask(__name__, template_folder='../templates',
             static_folder='../static')
+CORS(app)
+#
+test_planets = [
+    {
+        "pl_name": "Test Earth",
+        "distance_light_years": 0.0,
+        "pl_orblper": 365.25,
+        "gravity": 9.8,
+        "pl_rade": 1.0,
+        "category": "habitable"
+    },
+    {
+        "pl_name": "Mars",
+        "distance_light_years": 0.0000158,
+        "pl_orblper": 687.0,
+        "gravity": 3.7,
+        "pl_rade": 0.53,
+        "category": "habitable"
+    },
+    {
+        "pl_name": "Venus",
+        "distance_light_years": 0.0000114,
+        "pl_orblper": 225.0,
+        "gravity": 8.87,
+        "pl_rade": 0.95,
+        "category": "uninhabitable"
+    },
+    {
+        "pl_name": "Proxima b",
+        "distance_light_years": 4.24,
+        "pl_orblper": 11.2,
+        "gravity": 11.0,
+        "pl_rade": 1.1,
+        "category": "habitable"
+    },
+    {
+        "pl_name": "Kepler-452b",
+        "distance_light_years": 1400.0,
+        "pl_orblper": 385.0,
+        "gravity": 19.6,
+        "pl_rade": 1.63,
+        "category": "habitable"
+    },
+    {
+        "pl_name": "Kepler-22b",
+        "distance_light_years": 600.0,
+        "pl_orblper": 290.0,
+        "gravity": 15.0,
+        "pl_rade": 2.4,
+        "category": "terraforming"
+    }
+]
+
+def store_test_planets_in_db(test_planets):
+    # Connect to the SQLite database
+    conn = sqlite3.connect('planets.db')
+    c = conn.cursor()
+
+    # Iterate through the list of planets and insert them into the database
+    for planet in test_planets:
+        c.execute('''
+            INSERT INTO planets (pl_name, distance_light_years, pl_orblper, gravity, pl_rade, category)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            planet['pl_name'],
+            planet['distance_light_years'],
+            planet['pl_orblper'],
+            planet['gravity'],
+            planet['pl_rade'],
+            planet['category']
+        ))
+
+    # Commit the transaction and close the connection
+    conn.commit()
+    conn.close()
+
+@app.route('/test_planets', methods=['GET'])
+def get_test_planets():
+    return {"planets": test_planets}
+
+#
+
+import requests
 
 @app.route('/extract', methods=['GET'])
 def get_exoplanet_data():
