@@ -7,7 +7,7 @@
      // Fetch planets from Flask API
 
     onMount(async () => {
-        const res = await fetch('http://localhost:5000/test_planets'); // Adjust the URL if needed
+        const res = await fetch('http://localhost:5173/test_planets'); // Adjust the URL if needed
         const data = await res.json();
         console.log(data)
         planets = data.planets; // Assign the fetched planets to the variable
