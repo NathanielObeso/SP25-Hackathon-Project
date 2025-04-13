@@ -1,12 +1,4 @@
 
-<script>
-    export let name = "StarBnB"; 
-    export let tagline = "Your Galactic Getaway In The Stars Awaits!";
-    export let buttonText = "Explore Here";
-    export let planets = []; // Placeholder for planets data
-    export let filter = 'all'; // Default filter value
-</script>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,20 +30,6 @@
       margin: 0.5rem 0 2rem;
     }
 .\<env_name>\Scripts\activate
-    .button {
-      background-color: #9067C6;
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .button:hover {
-      background-color: #4A148C;
-    }
 
     .destinations {
       display: flex;
@@ -79,13 +57,33 @@
       font-size: 3rem;
       margin-bottom: 0.5rem;
     }
+
+
+  .explore-btn {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+    background-color: #0C2A4D;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    transition: background-color 0.3s ease;
+  }
+
+  .explore-btn:hover {
+    background-color: #9067C6;
+  }
+
   </style>
 </head>
+
 <body>
   <header>
     <h1>✦ StarBnB ✦</h1>
     <h2>⁂ Your Galactic Getaway In The Stars Awaits! ⁂</h2>
-    <button class="button">Explore Here</button>
+    <a href="/featured_planets" class="explore-btn">🌍 Explore Featured Planets Here!</a>
   </header>
 
   <section class="destinations">
@@ -94,17 +92,6 @@
       <h3>Planets</h3>
       <p>Explore exotic worlds across the galaxy.</p>
     </div>
-    <!-- Future Destination Options, show when implemented
-		  <div class="card">
-      <div class="icon">🌕</div>
-      <h3>Moons</h3>
-      <p>Stay on serene moons with stellar views.</p>
-    </div>
-    <div class="card">
-      <div class="icon">🛰️</div>
-      <h3>Orbitals</h3>
-      <p>Book luxury stays on futuristic space stations.</p>
-    </div>-->
   </section>
 </body>
 </html>
