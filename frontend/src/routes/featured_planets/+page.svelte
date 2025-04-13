@@ -7,8 +7,9 @@
      // Fetch planets from Flask API
 
     onMount(async () => {
-        const res = await fetch('http://localhost:5000/api/planets'); // Adjust if needed
+        const res = await fetch('http://127.0.0.1:5000/query=GET extract'); // Adjust if needed
         planets = await res.json();
+        console.log(planets);
 	});
 
     function filteredPlanets() {
