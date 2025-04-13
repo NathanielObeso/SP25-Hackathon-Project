@@ -29,7 +29,8 @@
       font-size: 1.5rem;
       margin: 0.5rem 0 2rem;
     }
-.\<env_name>\Scripts\activate
+
+    .\<env_name>\Scripts\activate
 
     .destinations {
       display: flex;
