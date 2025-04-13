@@ -56,10 +56,24 @@ def store_planets_in_db(planets, category):
         ))
     conn.commit()
 
+def get_db_connection():
+    conn = sqlite3.connect('planets.db')
+    conn.row_factory = sqlite3.Row  # Optional: Return rows as dictionaries
+    return conn
+
+def fetch_data_from_nasa(query):
+    url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={query}&format=json"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching data: {e}")
+        return []
+
 @app.route('/')
 @app.route('/index')
 def index():
-    # Query for habitable planets
     habitable_query = """
         SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
         (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
@@ -68,7 +82,6 @@ def index():
         AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 
         ORDER BY sy_dist;
     """
-    # Query for terraforming planets
     terraforming_query = """
         SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
         (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
@@ -78,38 +91,37 @@ def index():
         ORDER BY sy_dist;
     """
 
-    # Fetch data from NASA's API
-    habitable_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={habitable_query}&format=json"
-    terraforming_url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={terraforming_query}&format=json"
+    habitable_planets = fetch_data_from_nasa(habitable_query)
+    terraforming_planets = fetch_data_from_nasa(terraforming_query)
 
-    habitable_response = requests.get(habitable_url)
-    terraforming_response = requests.get(terraforming_url)
-
-    habitable_planets = habitable_response.json() if habitable_response.status_code == 200 else []
-    terraforming_planets = terraforming_response.json() if terraforming_response.status_code == 200 else []
-
-    # Pass both lists to the frontend
     return render_template('index.html', habitable_planets=habitable_planets, terraforming_planets=terraforming_planets)
 
 @app.route('/planets', methods=['GET'])
 def get_planets():
+    conn = get_db_connection()
+    c = conn.cursor()
     c.execute('SELECT * FROM habitable_planets')
     planets = c.fetchall()
+    conn.close()
     return {"planets": planets}
 
 @app.route('/<path:path>')
 def catch_all(path):
-    """A special route that catches all other requests
-
-    Note: Let this be your last route. Priority is defined
-    by order, so placing this above other functions will
-    cause catch_all() to override then.
-
-    Return: A redirect to our index route
-    """
-
     return redirect(url_for('index'))
-
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+import requests
+
+query = """
+    SELECT TOP 30 pl_name, sy_dist * 3.26156 AS distance_light_years, pl_orblper, 
+    (pl_massj * 317.83) / POWER(pl_rade, 2) AS gravity, pl_rade 
+    FROM ps 
+    WHERE sy_dist IS NOT NULL AND pl_rade IS NOT NULL 
+    AND pl_orblper >= 365.25 * 0.8 AND pl_orblper <= 365.25 * 1.2 
+    ORDER BY sy_dist;
+"""
+url = f"https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query={query}&format=json"
+response = requests.get(url)
+print(response.json())
